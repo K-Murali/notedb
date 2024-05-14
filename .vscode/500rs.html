@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+	<a href="#" onclick="yourlink()">Click Here</a>
+
+	<script>
+
+		function yourlink() {
+			const englishWords = [
+			"KCEXPL&q=Dangal&filters=sid:%2239456736-7de9-4870-a5f9-71cf6906acae%22+lite:%22.S2NkUmVsYXRpb25eMDJiNjlkN2ItMzY2Yy00ZWI4LWExZjEtM2I5Y2Q3ZTIyYmQ0Xl5eXiRFbnRpdHkyX2Vu%22",
+				"Avatar",
+				"Beyoncé",
+				"Breaking Bad",
+				"Chernobyl",
+				"David Bowie",
+				"Deadpool",
+				"Doctor Who",
+				"Elon Musk",
+				"Friends",
+				"Game of Thrones",
+				"Gandalf",
+				"Harry Potter",
+				"Hawkeye",
+				"Iron Man",
+				"James Bond",
+				"John Lennon",
+				"Joker",
+				"Jurassic Park",
+				"Kanye West",
+				"Kill Bill",
+				"La La Land",
+				"Leonardo da Vinci",
+				"Mad Men",
+				"Madonna",
+				"Marvel",
+				"Meryl Streep",
+				"Michael Jackson",
+				"Mindhunter",
+				"Mr. Robot",
+				"Nelson Mandela",
+				"Nirvana",
+				"Orange Is the New Black",
+				"Outlander",
+				"Pulp Fiction",
+				"Queen",
+				"Rami Malek",
+				"Rick and Morty",
+				"Rocky",
+				"Scarlett Johansson",
+				"Schindler's List",
+				"Sherlock Holmes",
+				"Star Wars",
+				"Steve Jobs",
+				"Stranger Things",
+				"Suits",
+				"The Beatles",
+				"The Big Bang Theory",
+				"The Crown",
+				"The Dark Knight",
+				"The Godfather",
+				"The Lion King",
+				"The Matrix",
+				"The Office",
+				"The Queen's Gambit",
+				"The Shawshank Redemption",
+				"The Sopranos",
+				"The Terminator",
+				"The Walking Dead",
+				"The Wire",
+				"Tina Turner",
+				"Tom Hanks",
+				"Tony Stark",
+				"Toy Story",
+				"Trainspotting",
+				"Twilight",
+				"Uma Thurman",
+				"V for Vendetta",
+				"Vin Diesel",
+				"Walt Disney",
+				"Willy Wonka",
+				"Wonder Woman",
+				"X-Men",
+				"Yoda",
+				"Zac Efron",
+				"Zombieland"
+			];
+
+
+			for (let i = 1; i < 30; i++) {
+				var locs = `https://www.bing.com/search?q=${englishWords[i]}`;
+				window.open(locs);
+				wait(5000 + Math.floor (Math.random () * (2000)));
+			};
+
+		};
+		function wait(ms){
+			var start = new Date().getTime();
+			var end = start;
+			while(end < start + ms) {
+				end = new Date().getTime();
+			}
+		}
+
+	</script>
+	</body>
