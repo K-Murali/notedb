@@ -9,6 +9,7 @@ const DB = process.env.DATABASE.replace(
 );
 // console.log(process.env.USERNAME);
 
+
 const connectToMongo = () => {
   mongoose.connect(DB, {}).then((con) => {
     console.log("DB connection successful");
