@@ -2,17 +2,19 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = "myname is murali";
 
 const fetchuser = (req, res, next) => {
-  // get the user from the jwt token and append if to the req object
+  // Get the user from the JWT token and append it to the req object
   const token = req.header("auth-token");
   if (!token) {
-    res.send(401).send({ error: "access denied" });
+    return res.status(401).json({ error: "access denied" });
   }
   try {
     const data = jwt.verify(token, JWT_SECRET);
     req.user = data.user;
+    // console.log(req.user);
     next();
   } catch (error) {
-    res.send(401).send({ error: "access denied" });
+    return res.status(401).json({ error: "access denied" });
   }
 };
+
 module.exports = fetchuser;
