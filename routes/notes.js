@@ -5,6 +5,7 @@ const Notes = require("../models/Notes");
 const fetchuser = require("../middleware/fetchuser");
 const { body, validationResult } = require("express-validator");
 const { handle_likes } = require("../controllers/notescontroller");
+const { createBookingCheckout } = require("../controllers/bookingscontroller");
 
 // Route 1 : get user notes : GET "/api/notes/fetchnotes"
 // uploading image
@@ -45,7 +46,7 @@ router.get("/fetchnotes", fetchuser, async (req, res) => {
   }
 });
 
-router.get("/allnotes", async (req, res) => {
+router.get("/allnotes", createBookingCheckout, async (req, res) => {
   try {
     const note = await Notes.find().populate("comments");
     res.json(note);
@@ -110,7 +111,7 @@ router.post("/like/:tourid", fetchuser, async (req, res) => {
 // Route 2 : post user notes : post "/api/notes/addnote"
 router.post(
   "/addnote",
-  upload.single("photo"),
+  // upload.single("photo"),
   [
     body("title", "title must be at least 3 char ").isLength({ min: 3 }),
     body("description", "description must be at least 5 char").isLength({
@@ -120,17 +121,16 @@ router.post(
   fetchuser,
   async (req, res) => {
     const errors = validationResult(req);
+    console.log(req.body);
     if (!errors.isEmpty()) {
       return res.status(400).send(errors.array());
     }
     try {
-      const { title, description, tag, para } = req.body;
-      console.log(req.body); // Ensure req.file is defined
+      const { title, description, tag, photo } = req.body;
       const note = new Notes({
         title,
         description,
-        photo: req.file.filename,
-        para, // Access uploaded file using req.file
+        photo,
         tag,
         user: req.user.id,
       });
@@ -145,33 +145,42 @@ router.post(
 
 // Route 3 : Update user notes : post "/api/notes/updatenote/:id"
 
-router.put("/updatenote/:id", fetchuser, async (req, res) => {
-  const { title, description, tag } = req.body;
-  const newnote = {};
-  if (title) {
-    newnote.title = title;
-  }
-  if (description) {
-    newnote.description = description;
-  }
-  if (tag) {
-    newnote.tag = tag;
-  }
+router.put(
+  "/updatenote/:id",
+  // upload.single("photo"),
+  fetchuser,
+  async (req, res) => {
+    const { title, description, tag } = req.body;
+    const newnote = {};
+    if (title) {
+      newnote.title = title;
+    }
+    if (description) {
+      newnote.description = description;
+    }
+    if (tag) {
+      newnote.tag = tag;
+    }
+    if (req.body.photo) {
+      newnote.photo = req.body.photo;
+    }
 
-  let note = await Notes.findById(req.params.id);
-  if (!note) {
-    return res.status(404).send("not found");
+    console.log(newnote);
+    let note = await Notes.findById(req.params.id);
+    if (!note) {
+      return res.status(404).send("not found");
+    }
+    if (note.user.toString() !== req.user.id) {
+      return res.status(401).send("Not allowed");
+    }
+    note = await Notes.findByIdAndUpdate(
+      req.params.id,
+      { $set: newnote },
+      { new: true }
+    );
+    res.json(note);
   }
-  if (note.user.toString() !== req.user.id) {
-    return res.status(401).send("Not allowed");
-  }
-  note = await Notes.findByIdAndUpdate(
-    req.params.id,
-    { $set: newnote },
-    { new: true }
-  );
-  res.json(note);
-});
+);
 // Route 4 : Delete user notes : post "/api/notes/deletenote/:id"
 
 router.delete("/deletenote/:id", fetchuser, async (req, res) => {

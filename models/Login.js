@@ -7,6 +7,7 @@ const Userschema = new Schema(
       type: String,
       required: true,
     },
+
     email: {
       type: String,
       required: true,
@@ -15,6 +16,9 @@ const Userschema = new Schema(
     password: {
       type: String,
       required: true,
+    },
+    photo:{
+      type:String,
     },
     saved: [{ type: mongoose.Schema.Types.ObjectId, ref: "notes" }],
     date: {
@@ -36,6 +40,11 @@ Userschema.virtual("liked", {
 
 Userschema.virtual("tours", {
   ref: "notes",
+  foreignField: "user",
+  localField: "_id",
+});
+Userschema.virtual("bookings", {
+  ref: "bookings",
   foreignField: "user",
   localField: "_id",
 });

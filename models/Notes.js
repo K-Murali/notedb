@@ -3,10 +3,7 @@ const { Schema } = mongoose;
 
 const Notesschema = new Schema(
   {
-    likes: [
-      { type: mongoose.Schema.Types.ObjectId,
-         ref: "login" }
-        ],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "login" }],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "login",
@@ -14,6 +11,10 @@ const Notesschema = new Schema(
     title: {
       type: String,
       required: true,
+    },
+    price: {
+      type: Number,
+      defaultValue: 750,
     },
     description: {
       type: String,

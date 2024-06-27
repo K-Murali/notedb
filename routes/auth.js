@@ -94,10 +94,11 @@ router.post(
       const data = {
         user: { id: user.id, email: user.email },
       };
+      const photo = user.photo;
       // shoukd not change this one!!! above
       success = true;
       const authtoken = jwt.sign(data, JWT_SECRET);
-      res.json({ success, authtoken, name, data });
+      res.json({ success, authtoken, name, data, photo });
     } catch (err) {
       console.log(err.message);
       res.status(500).send("some error in the server!!");
@@ -119,6 +120,10 @@ router.get("/getuser", fetchuser, async (req, res) => {
       .populate({
         path: "liked",
         select: "_id photo",
+      })
+      .populate({
+        path: "bookings",
+        select: "tour -user",
       });
 
     res.json(user);
@@ -127,10 +132,31 @@ router.get("/getuser", fetchuser, async (req, res) => {
     res.status(500).send("some error in the server");
   }
 });
+router.get("/bookings", fetchuser, async (req, res) => {
+  try {
+    const userid = req.user.id;
+    const user = await User.findById(userid)
+      .select("bookings -saved")
+      .populate({
+        path: "bookings",
+        select: "tour -user",
+      });
+    const booked = user.bookings.map((e) => e.tour._id);
+
+    console.log(booked);
+    res.json(booked);
+  } catch (e) {
+    res.status(400).json({
+      status: "fail",
+      message: e.message,
+    });
+  }
+});
 router.patch("/updateuser", fetchuser, async (req, res) => {
   try {
     const userid = req.user.id;
-    if (req.body.name == "" && req.body.email == "") {
+
+    if (req.body.name == "" && req.body.email == "" && req.body.photo == "") {
       res.status(200).json({
         status: "fail",
         message: "please make changes in the fileds",
@@ -143,6 +169,9 @@ router.patch("/updateuser", fetchuser, async (req, res) => {
     }
     if (req.body.name != "") {
       curruser.name = req.body.name;
+    }
+    if (req.body.photo != "") {
+      curruser.photo = req.body.photo;
     }
     if (req.body.email == "") {
       curruser.save();
