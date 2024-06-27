@@ -49,7 +49,7 @@ exports.getcheckout = async (req, res, next) => {
       ],
       mode: "payment", // Specify the mode: payment or subscription
       // customer_email: req.user.email,
-      success_url: `https://k-murali.github.io/home?tour=${
+      success_url: `https://k-murali.github.io/Blogger?tour=${
         req.params.tourid
       }&user=${req.user.id}&price=${900}`,
 
