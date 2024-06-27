@@ -37,7 +37,9 @@ exports.getcheckout = async (req, res, next) => {
             currency: "usd",
             product_data: {
               name: tour.title,
-              images: [`https://notedb.onrender.com/Images/${tour.photo}`],
+              images: [
+                `https://res.cloudinary.com/drfvhp1jh/image/upload/${tour.photo}`,
+              ],
               description: tour.description.slice(0, 80),
             },
             unit_amount: 997 * 100, // amount in cents
@@ -47,7 +49,7 @@ exports.getcheckout = async (req, res, next) => {
       ],
       mode: "payment", // Specify the mode: payment or subscription
       // customer_email: req.user.email,
-      success_url: `${req.protocol}://localhost:${3000}/home?tour=${
+      success_url: `https://k-murali.github.io/home?tour=${
         req.params.tourid
       }&user=${req.user.id}&price=${900}`,
 
