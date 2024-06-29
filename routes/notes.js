@@ -72,7 +72,7 @@ router.get("/allnotes", createBookingCheckout, async (req, res) => {
     } else {
       notes = notes.sort("-date");
     }
-    notes = await notes;
+    notes = await notes.populate("comments");
     res.json(notes);
   } catch (err) {
     console.log(err.message);
