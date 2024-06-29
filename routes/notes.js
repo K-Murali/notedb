@@ -48,8 +48,32 @@ router.get("/fetchnotes", fetchuser, async (req, res) => {
 
 router.get("/allnotes", createBookingCheckout, async (req, res) => {
   try {
-    const note = await Notes.find().populate("comments");
-    res.json(note);
+    const query = { ...req.query };
+    const excluded = ["page", "sort", "limit", "fields", "date"];
+    excluded.forEach((key) => {
+      delete query[key];
+    });
+
+    let querystr = JSON.stringify(query);
+    querystr = querystr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
+    querystr = JSON.parse(querystr);
+
+    const dateFilter = {
+      date: {
+        $gte: new Date(req.query.date?.gte || "2024-01-01"),
+        $lte: new Date(req.query.date?.lte || Date.now()),
+      },
+    };
+    querystr = { ...dateFilter, ...querystr };
+    let notes = Notes.find(querystr);
+    if (req.query.sort) {
+      const sortby = req.query.sort.split(",").join(" ");
+      notes = notes.sort(sortby);
+    } else {
+      notes = notes.sort("-date");
+    }
+    notes = await notes;
+    res.json(notes);
   } catch (err) {
     console.log(err.message);
     res.status(500).send("some error");
@@ -126,12 +150,14 @@ router.post(
       return res.status(400).send(errors.array());
     }
     try {
-      const { title, description, tag, photo } = req.body;
+      const { title, description, tag, photo, price, location } = req.body;
       const note = new Notes({
         title,
         description,
         photo,
         tag,
+        price,
+        location,
         user: req.user.id,
       });
       await note.save();

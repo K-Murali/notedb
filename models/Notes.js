@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 const Notesschema = new Schema(
   {
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "login" }],
+    likescount: {
+      type: Number,
+      default: 0,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "login",
@@ -14,11 +18,15 @@ const Notesschema = new Schema(
     },
     price: {
       type: Number,
-      defaultValue: 750,
+      default: 750,
     },
     description: {
       type: String,
       required: true,
+    },
+    location: {
+      type: String,
+      default: "hyderabad",
     },
     tag: {
       type: String,
@@ -46,6 +54,13 @@ Notesschema.virtual("comments", {
   ref: "comments",
   foreignField: "tour",
   localField: "_id",
+});
+
+
+
+Notesschema.pre("save", function (next) {
+  this.likescount = this.likes.length;
+  next();
 });
 
 module.exports = mongoose.model("notes", Notesschema);

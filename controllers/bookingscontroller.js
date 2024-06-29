@@ -42,7 +42,7 @@ exports.getcheckout = async (req, res, next) => {
               ],
               description: tour.description.slice(0, 80),
             },
-            unit_amount: 997 * 100, // amount in cents
+            unit_amount: tour.price, // amount in cents
           },
           quantity: 1, // You may adjust quantity if needed
         },
