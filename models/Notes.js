@@ -4,10 +4,7 @@ const { Schema } = mongoose;
 const Notesschema = new Schema(
   {
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "login" }],
-    likescount: {
-      type: Number,
-      default: 0,
-    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "login",
@@ -56,11 +53,10 @@ Notesschema.virtual("comments", {
   localField: "_id",
 });
 
+Notesschema.index({title:'text',location:'text',tag:'text'})
 
-
-Notesschema.pre("save", function (next) {
-  this.likescount = this.likes.length;
-  next();
+Notesschema.virtual("likescount", function () {
+  return this.likes.length;
 });
 
 module.exports = mongoose.model("notes", Notesschema);

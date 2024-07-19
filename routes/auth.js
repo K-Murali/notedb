@@ -47,7 +47,7 @@ router.post(
       // sending res of created user data
 
       const data = {
-        user: { id: user.id, email: user.email, saved: user.saved },
+        user: { id: user.id, email: user.email },
       };
       success = true;
       const authtoken = jwt.sign(data, JWT_SECRET);

@@ -49,7 +49,7 @@ router.get("/fetchnotes", fetchuser, async (req, res) => {
 router.get("/allnotes", createBookingCheckout, async (req, res) => {
   try {
     const query = { ...req.query };
-    const excluded = ["page", "sort", "limit", "fields", "date"];
+    const excluded = ["page", "sort", "limit", "fields", "date", "keyword"];
     excluded.forEach((key) => {
       delete query[key];
     });
@@ -64,8 +64,26 @@ router.get("/allnotes", createBookingCheckout, async (req, res) => {
         $lte: new Date(req.query.date?.lte || Date.now()),
       },
     };
+
     querystr = { ...dateFilter, ...querystr };
-    let notes = Notes.find(querystr);
+    let str = (req.query.keyword || "").trim();
+    str = str.split(" ").map((word) => `.*${word}.*`).join(".*");
+
+    console.log(str);
+    str = str.trim();
+    let notes = Notes.find({
+      $and: [
+        // { $text: { $search: str } },
+        {
+          $or: [
+            { title: { $regex: str, $options: "i" } },
+            { location: { $regex: str, $options: "i" } },
+            { tag: { $regex: str, $options: "i" } },
+          ],
+        },
+        querystr,
+      ],
+    });
     if (req.query.sort) {
       const sortby = req.query.sort.split(",").join(" ");
       notes = notes.sort(sortby);
