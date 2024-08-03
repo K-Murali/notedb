@@ -68,8 +68,6 @@ router.get("/allnotes", createBookingCheckout, async (req, res) => {
     querystr = { ...dateFilter, ...querystr };
     let str = (req.query.keyword || "").trim();
     str = str.split(" ").map((word) => `.*${word}.*`).join(".*");
-
-    console.log(str);
     str = str.trim();
     let notes = Notes.find({
       $and: [
